@@ -2,6 +2,7 @@ package net.kdt.pojavlaunch.prefs;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -10,6 +11,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SeekBarPreference;
 
@@ -67,6 +69,8 @@ public class CustomSeekBarPreference extends SeekBarPreference {
         mTextView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         SeekBar seekBar = (SeekBar) view.findViewById(R.id.seekbar);
 
+        seekBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.launcher_primary)));
+        seekBar.setThumbTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.launcher_primary)));
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override

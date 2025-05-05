@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/mine_button_focused" />
-    <item android:state_enabled="false" android:drawable="@drawable/mine_button_focused" />
-    <item android:drawable="@drawable/mine_button_unfocused" />
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:state_pressed="true" android:color="#d1382f" />
+    <solid android:state_enabled="false" android:color="#d1382f" />
+    <solid android:color="#ef4136" />
+    <corners android:radius="8dp" />
+</shape>

@@ -2,40 +2,49 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app2="http://schemas.android.com/apk/res-auto">
 
-    <net.kdt.pojavlaunch.prefs.BackButtonPreference/>
+    <Preference
+        android:key="java_setting"
+        android:title="@string/preference_java_title"
+        android:fragment="net.kdt.pojavlaunch.fragments.MainMenuFragment"
+        android:icon="@drawable/ic_close"
+        android:layout="@layout/preference_back_button" />
 
-    <PreferenceCategory android:title="@string/preference_category_java_tweaks">
-        <Preference
-            android:key="install_jre"
-            android:persistent="false"
-            android:summary="@string/multirt_subtitle"
-            android:title="@string/multirt_title"/>
+    <Preference
+        android:key="install_jre"
+        android:persistent="false"
+        android:summary="@string/multirt_subtitle"
+        android:title="@string/multirt_title"
+        android:icon="@drawable/ic_setting_java_runtime"
+        android:layout="@layout/preference_layout"/>
 
-        <androidx.preference.EditTextPreference
-            android:dialogTitle="@string/mcl_setting_title_javaargs"
+    <androidx.preference.EditTextPreference
+        android:dialogTitle="@string/mcl_setting_title_javaargs"
 
-            android:key="javaArgs"
-            android:singleLine="true"
-            android:summary="@string/mcl_setting_subtitle_javaargs"
-            android:title="@string/mcl_setting_title_javaargs" />
+        android:key="javaArgs"
+        android:singleLine="true"
+        android:summary="@string/mcl_setting_subtitle_javaargs"
+        android:title="@string/mcl_setting_title_javaargs"
+        android:icon="@drawable/ic_setting_arguments"
+        android:layout="@layout/preference_layout"/>
 
-        <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
-            android:key="allocation"
+    <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
+        android:key="allocation"
 
-            android:summary="@string/mcl_memory_allocation_subtitle"
-            android:title="@string/mcl_memory_allocation"
-            app2:showSeekBarValue="true"
-            app2:min="@integer/memory_seekbar_min"
-            app2:seekBarIncrement="@integer/memory_seekbar_increment"
-            app2:selectable="false"/>
+        android:summary="@string/mcl_memory_allocation_subtitle"
+        android:title="@string/mcl_memory_allocation"
+        android:icon="@drawable/ic_setting_memory"
+        app2:showSeekBarValue="true"
+        app2:min="@integer/memory_seekbar_min"
+        app2:seekBarIncrement="@integer/memory_seekbar_increment"
+        app2:selectable="false"
+        android:layout="@layout/preference_seekbar_layout"/>
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="java_sandbox"
-            android:summary="@string/mcl_setting_java_sandbox_subtitle"
-            android:title="@string/mcl_setting_java_sandbox" />
-
-    </PreferenceCategory>
-
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="java_sandbox"
+        android:layout="@layout/preference_switch_layout"
+        android:summary="@string/mcl_setting_java_sandbox_subtitle"
+        android:title="@string/mcl_setting_java_sandbox"
+        android:icon="@drawable/ic_menu_settings_active" />
 
 </PreferenceScreen>

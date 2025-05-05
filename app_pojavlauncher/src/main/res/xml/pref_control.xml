@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app2="http://schemas.android.com/apk/res-auto">
 
-    <net.kdt.pojavlaunch.prefs.BackButtonPreference/>
-
+    <Preference
+        android:key="control_setting"
+        android:title="@string/preference_control_title"
+        android:fragment="net.kdt.pojavlaunch.fragments.MainMenuFragment"
+        android:icon="@drawable/ic_close"
+        android:layout="@layout/preference_back_button" />
 
     <Preference
-        android:title="@string/preference_edit_controls_title"
         android:summary="@string/preference_edit_controls_summary"
+        android:title="@string/preference_edit_controls_title"
         app2:icon="@drawable/ic_menu_custom_controls"
-        >
-        <intent android:targetPackage="@string/application_package" android:targetClass="net.kdt.pojavlaunch.CustomControlsActivity" android:action=".CustomControlsActivity"/>
+        android:layout="@layout/preference_layout">
+        <intent
+            android:action=".CustomControlsActivity"
+            android:targetClass="net.kdt.pojavlaunch.CustomControlsActivity"
+            android:targetPackage="@string/application_package" />
     </Preference>
 
     <PreferenceCategory
@@ -21,92 +29,98 @@
             android:icon="@drawable/ic_setting_gesture_disable"
             android:key="disableGestures"
             android:summary="@string/mcl_disable_gestures_subtitle"
-            android:title="@string/mcl_disable_gestures" />
+            android:title="@string/mcl_disable_gestures"
+            android:layout="@layout/preference_switch_layout" />
 
         <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="disableDoubleTap"
             android:summary="@string/mcl_disable_swap_hand_subtitle"
-            android:title="@string/mcl_disable_swap_hand" />
+            android:title="@string/mcl_disable_swap_hand"
+            android:icon="@drawable/ic_setting_double_touch_disable"
+            android:layout="@layout/preference_switch_layout" />
 
         <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
+            android:icon="@drawable/ic_setting_gesture_time"
             android:key="timeLongPressTrigger"
+            android:max="@integer/gesture_delay_seekbar_max"
             android:summary="@string/mcl_setting_subtitle_longpresstrigger"
             android:title="@string/mcl_setting_title_longpresstrigger"
-            app2:showSeekBarValue="true"
-            app2:selectable="false"
             app2:min="@integer/gesture_delay_seekbar_min"
-            android:max="@integer/gesture_delay_seekbar_max"
             app2:seekBarIncrement="@integer/gesture_delay_seekbar_increment"
-            android:icon="@drawable/ic_setting_gesture_time"
-            />
-
+            app2:selectable="false"
+            app2:showSeekBarValue="true"
+            android:layout="@layout/preference_seekbar_layout" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/preference_category_buttons">
 
         <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
-            android:key="buttonscale"
-            android:title="@string/mcl_setting_title_buttonscale"
-            android:summary="@string/mcl_setting_subtitle_buttonscale"
-            app2:showSeekBarValue="true"
-            app2:selectable="false"
-            app2:min="@integer/button_scale_seekbar_min"
-            android:max="@integer/button_scale_seekbar_max"
-            app2:seekBarIncrement="@integer/button_scale_seekbar_increment"
             android:icon="@drawable/ic_setting_control_scale"
-            />
-        <SwitchPreference
+            android:key="buttonscale"
+            android:max="@integer/button_scale_seekbar_max"
+            android:summary="@string/mcl_setting_subtitle_buttonscale"
+            android:title="@string/mcl_setting_title_buttonscale"
+            app2:min="@integer/button_scale_seekbar_min"
+            app2:seekBarIncrement="@integer/button_scale_seekbar_increment"
+            app2:selectable="false"
+            app2:showSeekBarValue="true"
+            android:layout="@layout/preference_seekbar_layout" />
+
+        <androidx.preference.SwitchPreferenceCompat
             android:key="buttonAllCaps"
             android:defaultValue="true"
             android:title="@string/mcl_setting_title_buttonallcaps"
             android:summary="@string/mcl_setting_subtitle_buttonallcaps"
-            />
-
+            android:layout="@layout/preference_switch_layout" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/preference_category_virtual_mouse">
 
         <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
+            android:icon="@drawable/ic_setting_pointer_scale"
             android:key="mousescale"
+            android:max="@integer/mouse_scale_seekbar_max"
             android:summary="@string/mcl_setting_subtitle_mousescale"
             android:title="@string/mcl_setting_title_mousescale"
-
-            app2:selectable="false"
             app2:min="@integer/mouse_scale_seekbar_min"
-            android:max="@integer/mouse_scale_seekbar_max"
             app2:seekBarIncrement="@integer/mouse_scale_seekbar_increment"
+            app2:selectable="false"
             app2:showSeekBarValue="true"
-            android:icon="@drawable/ic_setting_pointer_scale"
-            />
+            android:layout="@layout/preference_seekbar_layout" />
 
         <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
+            android:icon="@drawable/ic_setting_mouse_speed"
             android:key="mousespeed"
+            android:max="@integer/mouse_speed_seekbar_max"
             android:summary="@string/mcl_setting_subtitle_mousespeed"
             android:title="@string/mcl_setting_title_mousespeed"
-            android:icon="@drawable/ic_setting_mouse_speed"
-            app2:selectable="false"
             app2:min="@integer/mouse_speed_seekbar_min"
-            android:max="@integer/mouse_speed_seekbar_max"
             app2:seekBarIncrement="@integer/mouse_speed_seekbar_increment"
-            app2:showSeekBarValue="true" />
-        <SwitchPreference
+            app2:selectable="false"
+            app2:showSeekBarValue="true"
+            android:layout="@layout/preference_seekbar_layout" />
+
+        <androidx.preference.SwitchPreferenceCompat
             android:key="mouse_start"
-            android:title="@string/preference_mouse_start_title"
             android:summary="@string/preference_mouse_start_description"
-            />
+            android:title="@string/preference_mouse_start_title"
+            tools:icon="@drawable/ic_menu_settings_active"
+            android:layout="@layout/preference_switch_layout" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="gyroCategory"
-        android:title="@string/preference_category_gyro_controls"
-        >
-        <SwitchPreference
+        android:title="@string/preference_category_gyro_controls">
+
+        <androidx.preference.SwitchPreferenceCompat
             android:key="enableGyro"
             android:title="@string/preference_enable_gyro_title"
-            android:summary="@string/preference_enable_gyro_description"/>
+            android:summary="@string/preference_enable_gyro_description"
+            android:layout="@layout/preference_switch_layout" />
+
         <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
             android:key="gyroSensitivity"
             android:title="@string/preference_gyro_sensitivity_title"
@@ -115,7 +129,9 @@
             app2:min="@integer/gyro_speed_seekbar_min"
             android:max="@integer/gyro_speed_seekbar_max"
             app2:seekBarIncrement="@integer/gyro_speed_seekbar_increment"
-            app2:showSeekBarValue="true"/>
+            app2:showSeekBarValue="true"
+            android:layout="@layout/preference_seekbar_layout" />
+
         <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
             android:key="gyroSampleRate"
             android:title="@string/preference_gyro_sample_rate_title"
@@ -123,35 +139,43 @@
             app2:min="@integer/gyro_rate_seekbar_min"
             android:max="@integer/gyro_rate_seekbar_max"
             app2:selectable="false"
-            app2:showSeekBarValue="true"/>
-        <SwitchPreferenceCompat
+            app2:showSeekBarValue="true"
+            android:layout="@layout/preference_seekbar_layout" />
+
+        <androidx.preference.SwitchPreferenceCompat
             android:key="gyroSmoothing"
             android:title="@string/preference_gyro_smoothing_title"
             android:summary="@string/preference_gyro_smoothing_description"
             android:defaultValue="true"
-            />
-        <SwitchPreference
+            android:layout="@layout/preference_switch_layout" />
+
+        <androidx.preference.SwitchPreferenceCompat
             android:key="gyroInvertX"
             android:title="@string/preference_gyro_invert_x_axis"
-            android:summary="@string/preference_gyro_invert_x_axis_description"/>
-        <SwitchPreference
+            android:summary="@string/preference_gyro_invert_x_axis_description"
+            android:layout="@layout/preference_switch_layout" />
+
+        <androidx.preference.SwitchPreferenceCompat
             android:key="gyroInvertY"
             android:title="@string/preference_gyro_invert_y_axis"
-            android:summary="@string/preference_gyro_invert_y_axis_description"/>
-
+            android:summary="@string/preference_gyro_invert_y_axis_description"
+            android:layout="@layout/preference_switch_layout" />
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/preference_category_controller_settings"
-        >
+        android:title="@string/preference_category_controller_settings">
+
         <Preference
-            android:title="@string/preference_remap_controller_title"
+            android:fragment="net.kdt.pojavlaunch.fragments.GamepadMapperFragment"
             android:summary="@string/preference_remap_controller_description"
-            android:fragment="net.kdt.pojavlaunch.fragments.GamepadMapperFragment"/>
+            android:title="@string/preference_remap_controller_title"
+            android:layout="@layout/preference_layout" />
+
         <net.kdt.pojavlaunch.prefs.GamepadRemapPreference
             android:title="@string/preference_wipe_controller_title"
             android:summary="@string/preference_wipe_controller_description"
-            />
+            android:layout="@layout/preference_layout" />
+
         <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
             android:key="gamepad_deadzone_scale"
             android:title="@string/preference_deadzone_scale_title"
@@ -160,11 +184,7 @@
             app2:min="@integer/gamepad_deadzone_seekbar_min"
             android:max="@integer/gamepad_deadzone_seekbar_max"
             app2:seekBarIncrement="@integer/gamepad_deadzone_seekbar_increment"
-            />
-
+            android:layout="@layout/preference_seekbar_layout" />
     </PreferenceCategory>
-
-
-
 
 </PreferenceScreen>

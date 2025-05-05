@@ -6,46 +6,118 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
-    <com.kdt.mcgui.mcAccountSpinner
-        android:id="@+id/account_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_52sdp"
-
-        android:dropDownWidth="@dimen/_250sdp"
-        android:dropDownVerticalOffset="@dimen/_52sdp"
-
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/setting_button"
-        android:layout_width="@dimen/_52sdp"
-        android:layout_height="@dimen/_52sdp"
-        android:background="?attr/selectableItemBackground"
-        android:src="@drawable/ic_menu_settings"
-        android:scaleType="fitCenter"
-        android:paddingVertical="@dimen/_8sdp"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <!-- Holding most of the dynamic content -->
+
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/container_fragment"
 
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/progress_layout"
-        app:layout_constraintTop_toBottomOf="@+id/account_spinner" />
-
+        app:layout_constraintBottom_toTopOf="@id/container_menu"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
     <com.kdt.mcgui.ProgressLayout
         android:id="@+id/progress_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/container_menu">
+
+    </com.kdt.mcgui.ProgressLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_menu"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_68sdp"
+        android:background="#161616"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageButton
+            android:id="@+id/home_button"
+            style="@style/LauncherMenuButton.Universal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_22sdp"
+
+            android:paddingVertical="@dimen/_8sdp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_menu_home"
+            app:layout_constraintEnd_toStartOf="@id/divider"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:id="@+id/divider"
+            style="@style/LauncherFragment_Divider"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/padding_large"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/instagram_button"
+            app:layout_constraintStart_toEndOf="@id/home_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/instagram_button"
+            style="@style/LauncherMenuButton.Universal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_22sdp"
+
+            android:paddingVertical="@dimen/_8sdp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_instagram"
+            app:layout_constraintEnd_toStartOf="@id/divider1"
+            app:layout_constraintStart_toEndOf="@id/divider" />
+
+        <View
+            android:id="@+id/divider1"
+            style="@style/LauncherFragment_Divider"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/padding_large"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/discord_button"
+            app:layout_constraintStart_toEndOf="@id/instagram_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/discord_button"
+            style="@style/LauncherMenuButton.Universal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_22sdp"
+
+            android:paddingVertical="@dimen/_8sdp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_discord"
+            app:layout_constraintEnd_toStartOf="@id/divider2"
+            app:layout_constraintStart_toEndOf="@id/divider1" />
+
+        <View
+            android:id="@+id/divider2"
+            style="@style/LauncherFragment_Divider"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/padding_large"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/setting_button"
+            app:layout_constraintStart_toEndOf="@id/discord_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/setting_button"
+            style="@style/LauncherMenuButton.Universal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_22sdp"
+
+            android:paddingVertical="@dimen/_8sdp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_menu_settings"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/divider2" />
 
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

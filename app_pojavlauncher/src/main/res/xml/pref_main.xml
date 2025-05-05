@@ -7,52 +7,66 @@
     app:key=""
     >
 
-    <net.kdt.pojavlaunch.prefs.BackButtonPreference/>
-
-    <PreferenceCategory
+    <Preference
+        android:key="video_screen_setting"
         android:title="@string/preference_category_main_categories"
-        >
+        android:fragment="net.kdt.pojavlaunch.fragments.MainMenuFragment"
+        android:icon="@drawable/ic_close"
+        android:layout="@layout/preference_back_button"
+        />
 
-        <Preference
-            android:key="video_screen_setting"
-            android:title="@string/preference_video_title"
-            android:summary="@string/preference_video_description"
-            android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceVideoFragment"
-            android:icon="@drawable/ic_setting_video"
-            />
+    <Preference
+        android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceVideoFragment"
+        android:icon="@drawable/ic_setting_video"
+        android:key="video_screen_setting"
+        android:summary="@string/preference_video_description"
+        android:title="@string/preference_video_title"
+        android:layout="@layout/preference_layout" />
 
-        <Preference
-            android:key="control_screen_setting"
-            android:title="@string/preference_control_title"
-            android:summary="@string/preference_control_description"
-            android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceControlFragment"
-            android:icon="@drawable/ic_menu_custom_controls"
-            />
+    <Preference
+        android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceControlFragment"
+        android:icon="@drawable/ic_menu_custom_controls"
+        android:key="control_screen_setting"
+        android:summary="@string/preference_control_description"
+        android:title="@string/preference_control_title"
+        android:layout="@layout/preference_layout" />
 
-        <Preference
-            android:key="java_screen_setting"
-            android:title="@string/preference_java_title"
-            android:summary="@string/preference_java_description"
-            android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceJavaFragment"
-            android:icon="@drawable/ic_setting_java_runtime"
-            />
+    <Preference
+        android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceJavaFragment"
+        android:icon="@drawable/ic_setting_java_runtime"
+        android:key="java_screen_setting"
+        android:layout="@layout/preference_layout"
+        android:summary="@string/preference_java_description"
+        android:title="@string/preference_java_title" />
 
-        <Preference
-            android:key="misc_screen_setting"
-            android:title="@string/preference_misc_title"
-            android:summary="@string/preference_misc_description"
-            android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceMiscellaneousFragment"
-            android:icon="@drawable/ic_setting_misc"
-            />
+    <Preference
+        android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceMiscellaneousFragment"
+        android:icon="@drawable/ic_setting_misc"
+        android:key="misc_screen_setting"
+        android:layout="@layout/preference_layout"
+        android:summary="@string/preference_misc_description"
+        android:title="@string/preference_misc_title" />
 
+    <Preference
+        android:id="@+id/open_files_button"
+        android:icon="@drawable/ic_folder"
+        android:key="open_files_button"
+        android:layout="@layout/preference_layout"
+        android:title="@string/mcl_button_open_directory" />
 
-        <Preference
-            android:key="experimental_screen_setting"
-            android:title="@string/preference_experimental_title"
-            android:summary="@string/preference_experimental_description"
-            android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceExperimentalFragment"
-            />
-    </PreferenceCategory>
+    <Preference
+        android:id="@+id/share_logs_button"
+        android:icon="@drawable/ic_menu_share"
+        android:key="share_logs_button"
+        android:layout="@layout/preference_layout"
+        android:title="@string/main_share_logs" />
+
+    <Preference
+        android:key="experimental_screen_setting"
+        android:title="@string/preference_experimental_title"
+        android:summary="@string/preference_experimental_description"
+        android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceExperimentalFragment"
+        android:layout="@layout/preference_layout" />
 
     <SwitchPreference
         android:title="@string/preference_force_english_title"
@@ -64,7 +78,7 @@
         android:title="@string/preference_ask_for_notification_title"
         android:summary="@string/preference_ask_for_notification_description"
         android:key="notification_permission_request"
-        />
+        android:layout="@layout/preference_layout" />
 
 
 

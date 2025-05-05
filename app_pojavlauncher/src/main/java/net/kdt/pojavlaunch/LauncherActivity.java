@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -34,7 +33,11 @@ import net.kdt.pojavlaunch.fragments.SelectAuthFragment;
 import net.kdt.pojavlaunch.lifecycle.ContextAwareDoneListener;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
 import net.kdt.pojavlaunch.modloaders.modpacks.ModloaderInstallTracker;
+import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.IconCacheJanitor;
+import net.kdt.pojavlaunch.modloaders.modpacks.models.Constants;
+import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
+import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
@@ -48,6 +51,8 @@ import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LauncherActivity extends BaseActivity {
     public static final String SETTING_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
@@ -59,6 +64,9 @@ public class LauncherActivity extends BaseActivity {
 
     private mcAccountSpinner mAccountSpinner;
     private FragmentContainerView mFragmentView;
+    private ImageButton mHomeButton;
+    private ImageButton mInstagramButton;
+    private ImageButton mDiscordButton;
     private ImageButton mSettingsButton;
     private ProgressLayout mProgressLayout;
     private ProgressServiceKeeper mProgressServiceKeeper;
@@ -69,8 +77,10 @@ public class LauncherActivity extends BaseActivity {
     private final FragmentManager.FragmentLifecycleCallbacks mFragmentCallbackListener = new FragmentManager.FragmentLifecycleCallbacks() {
         @Override
         public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
-            mSettingsButton.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), f instanceof MainMenuFragment
-                    ? R.drawable.ic_menu_settings : R.drawable.ic_menu_home));
+            mHomeButton.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), f instanceof MainMenuFragment
+                    ? R.drawable.ic_menu_home_active : R.drawable.ic_menu_home));
+            mSettingsButton.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), f instanceof LauncherPreferenceFragment
+                    ? R.drawable.ic_menu_settings_active : R.drawable.ic_menu_settings));
         }
     };
 
@@ -90,47 +100,21 @@ public class LauncherActivity extends BaseActivity {
         return false;
     };
 
-    /* Listener for the settings fragment */
-    private final View.OnClickListener mSettingButtonListener = v -> {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(mFragmentView.getId());
-        if(fragment instanceof MainMenuFragment){
-            Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null);
-        } else{
-            // The setting button doubles as a home button now
-            Tools.backToMainMenu(this);
-        }
-    };
-
     private final ExtraListener<Boolean> mLaunchGameListener = (key, value) -> {
         if(mProgressLayout.hasProcesses()){
             Toast.makeText(this, R.string.tasks_ongoing, Toast.LENGTH_LONG).show();
             return false;
         }
 
-        String selectedProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,"");
-        if (LauncherProfiles.mainProfileJson == null || !LauncherProfiles.mainProfileJson.profiles.containsKey(selectedProfile)){
-            Toast.makeText(this, R.string.error_no_version, Toast.LENGTH_LONG).show();
-            return false;
-        }
-        MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(selectedProfile);
-        if (prof == null || prof.lastVersionId == null || "Unknown".equals(prof.lastVersionId)){
-            Toast.makeText(this, R.string.error_no_version, Toast.LENGTH_LONG).show();
-            return false;
-        }
-
+        mAccountSpinner = findViewById(R.id.account_spinner);
         if(mAccountSpinner.getSelectedAccount() == null){
             Toast.makeText(this, R.string.no_saved_accounts, Toast.LENGTH_LONG).show();
             ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true);
             return false;
         }
-        String normalizedVersionId = AsyncMinecraftDownloader.normalizeVersionId(prof.lastVersionId);
-        JMinecraftVersionList.Version mcVersion = AsyncMinecraftDownloader.getListedVersion(normalizedVersionId);
-        new MinecraftDownloader().start(
-                this,
-                mcVersion,
-                normalizedVersionId,
-                new ContextAwareDoneListener(this, normalizedVersionId)
-        );
+
+        installDefaultModpackAndLaunch();
+
         return false;
     };
 
@@ -192,7 +176,10 @@ public class LauncherActivity extends BaseActivity {
         ProgressKeeper.addTaskCountListener(mDoubleLaunchPreventionListener);
         ProgressKeeper.addTaskCountListener((mProgressServiceKeeper = new ProgressServiceKeeper(this)));
 
-        mSettingsButton.setOnClickListener(mSettingButtonListener);
+        mHomeButton.setOnClickListener(v -> Tools.swapFragment(this, MainMenuFragment.class, MainMenuFragment.TAG, null));
+        mInstagramButton.setOnClickListener(v -> Tools.openURL(this, getString(R.string.instagram_invite)));
+        mDiscordButton.setOnClickListener(v -> Tools.openURL(this, getString(R.string.discord_invite)));
+        mSettingsButton.setOnClickListener(v -> Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null));
         ProgressKeeper.addTaskCountListener(mProgressLayout);
         ExtraCore.addExtraListener(ExtraConstants.BACK_PREFERENCE, mBackPreferenceListener);
         ExtraCore.addExtraListener(ExtraConstants.SELECT_AUTH_METHOD, mSelectAuthMethod);
@@ -334,8 +321,72 @@ public class LauncherActivity extends BaseActivity {
     /** Stuff all the view boilerplate here */
     private void bindViews(){
         mFragmentView = findViewById(R.id.container_fragment);
+        mHomeButton = findViewById(R.id.home_button);
+        mInstagramButton = findViewById(R.id.instagram_button);
+        mDiscordButton = findViewById(R.id.discord_button);
         mSettingsButton = findViewById(R.id.setting_button);
         mAccountSpinner = findViewById(R.id.account_spinner);
         mProgressLayout = findViewById(R.id.progress_layout);
+    }
+
+    private static final ModItem DEFAULT_MODPACK = new ModItem(
+            Constants.SOURCE_MODRINTH,
+            true,
+            "II8o4caK",
+            "Avalon Cobblemon Oficial",
+            "Pack com Cobblemon e mods de performance…",
+            "https://cdn.modrinth.com/data/II8o4caK/8b781cd51b32314f896c39a97808204b37858928_96.webp"
+    );
+
+    private void installDefaultModpackAndLaunch() {
+        LauncherProfiles.load();
+
+        CommonApi api = new CommonApi(getString(R.string.curseforge_api_key));
+        ExecutorService exec = Executors.newSingleThreadExecutor();
+        exec.execute(() -> {
+            try {
+                ModDetail detail = api.getModDetails(DEFAULT_MODPACK);
+                api.handleInstallation(getApplicationContext(), detail, 0);
+
+                LauncherProfiles.load();
+                String lastProfileName = null;
+                for (String profileName : LauncherProfiles.mainProfileJson.profiles.keySet()) {
+                    lastProfileName = profileName;
+                }
+
+                LauncherPreferences.DEFAULT_PREF.edit()
+                        .putString(
+                                LauncherPreferences.PREF_KEY_CURRENT_PROFILE,
+                                lastProfileName
+                        )
+                        .apply();
+
+                MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(lastProfileName);
+                if (prof == null || prof.lastVersionId == null || "Unknown".equals(prof.lastVersionId)){
+                    Toast.makeText(this, R.string.error_no_version, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                String versionId = detail.mcVersionNames[0];
+                JMinecraftVersionList.Version mcVersion =
+                        AsyncMinecraftDownloader.getListedVersion(versionId);
+
+                new MinecraftDownloader().start(
+                        this,
+                        mcVersion,
+                        versionId,
+                        new ContextAwareDoneListener(this, versionId)
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() ->
+                        Toast.makeText(
+                                this,
+                                "Falha ao baixar client",
+                                Toast.LENGTH_LONG
+                        ).show()
+                );
+            }
+        });
     }
 }

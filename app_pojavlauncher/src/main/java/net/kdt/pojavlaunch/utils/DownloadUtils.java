@@ -81,6 +81,8 @@ public class DownloadUtils {
                 monitor.updateProgress(overall, length);
             }
             conn.disconnect();
+        } catch (IOException error) {
+            throw new IOException("Unable to download from " + urlInput, error);
         }
 
     }

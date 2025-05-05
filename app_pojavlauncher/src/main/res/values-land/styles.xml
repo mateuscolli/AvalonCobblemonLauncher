@@ -9,7 +9,12 @@
         <item name="android:navigationBarColor">@color/background_app</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
+        <item name="colorPrimary">@color/launcher_primary</item>
+        <item name="colorControlActivated">@color/launcher_primary</item>
+        <item name="preferenceCategoryTitleTextColor">@color/primary_text</item>
+
         <item name="android:textSize">@dimen/_14ssp</item>
+        <item name="android:fontFamily">@font/montserrat_regular</item>
 
     </style>
 

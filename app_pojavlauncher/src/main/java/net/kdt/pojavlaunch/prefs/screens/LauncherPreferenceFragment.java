@@ -1,6 +1,9 @@
 package net.kdt.pojavlaunch.prefs.screens;
 
 
+import static net.kdt.pojavlaunch.Tools.openPath;
+import static net.kdt.pojavlaunch.Tools.shareLog;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,7 +16,12 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.R;
+import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
+import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
+import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
+
+import java.io.File;
 
 /**
  * Preference for the main screen, any sub-screen should inherit this class for consistent behavior,
@@ -31,6 +39,18 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
     public void onCreatePreferences(Bundle b, String str) {
         addPreferencesFromResource(R.xml.pref_main);
         setupNotificationRequestPreference();
+
+        Preference mOpenDirectoryButton = requirePreference("open_files_button");
+        Preference mShareLogsButton = requirePreference("share_logs_button");
+
+        mOpenDirectoryButton.setOnPreferenceClickListener(preference -> {
+            openPath(preference.getContext(), getCurrentProfileDirectory(), false);
+            return true;
+        });
+        mShareLogsButton.setOnPreferenceClickListener(preference -> {
+            shareLog(requireContext());
+            return true;
+        });
     }
 
     private void setupNotificationRequestPreference() {
@@ -77,5 +97,14 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
         Preference preference = requirePreference(key);
         if(preferenceClass.isInstance(preference)) return (T)preference;
         throw new IllegalStateException("Preference "+key+" is not an instance of "+preferenceClass.getSimpleName());
+    }
+
+    private File getCurrentProfileDirectory() {
+        String currentProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
+        if(!Tools.isValidString(currentProfile)) return new File(Tools.DIR_GAME_NEW);
+        LauncherProfiles.load();
+        MinecraftProfile profileObject = LauncherProfiles.mainProfileJson.profiles.get(currentProfile);
+        if(profileObject == null) return new File(Tools.DIR_GAME_NEW);
+        return Tools.getGameDirPath(profileObject);
     }
 }
