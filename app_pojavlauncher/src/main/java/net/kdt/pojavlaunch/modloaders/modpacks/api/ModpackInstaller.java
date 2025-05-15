@@ -2,6 +2,7 @@ package net.kdt.pojavlaunch.modloaders.modpacks.api;
 
 import com.kdt.mcgui.ProgressLayout;
 
+import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.ModIconCache;
@@ -65,6 +66,8 @@ public class ModpackInstaller {
 
         LauncherProfiles.mainProfileJson.profiles.put(modpackName, profile);
         LauncherProfiles.write();
+
+        LauncherActivity.MODPACK_DOWNLOAD_FINISH = true;
 
         return modLoaderInfo;
     }

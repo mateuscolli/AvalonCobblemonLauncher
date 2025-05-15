@@ -51,11 +51,19 @@ import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
 import java.lang.ref.WeakReference;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class LauncherActivity extends BaseActivity {
     public static final String SETTING_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
+    public static boolean MODPACK_DOWNLOAD_FINISH = false;
+
+    private static final ModItem DEFAULT_MODPACK = new ModItem(
+            Constants.SOURCE_MODRINTH,
+            true,
+            "II8o4caK",
+            "Avalon Cobblemon Oficial",
+            "Pack com Cobblemon e mods de performance…",
+            "https://cdn.modrinth.com/data/II8o4caK/8b781cd51b32314f896c39a97808204b37858928_96.webp"
+    );
 
     public final ActivityResultLauncher<Object> modInstallerLauncher =
             registerForActivityResult(new OpenDocumentWithExtension("jar"), (data)->{
@@ -72,6 +80,7 @@ public class LauncherActivity extends BaseActivity {
     private ProgressServiceKeeper mProgressServiceKeeper;
     private ModloaderInstallTracker mInstallTracker;
     private NotificationManager mNotificationManager;
+    private String mSelectedProfile;
 
     /* Allows to switch from one button "type" to another */
     private final FragmentManager.FragmentLifecycleCallbacks mFragmentCallbackListener = new FragmentManager.FragmentLifecycleCallbacks() {
@@ -113,10 +122,64 @@ public class LauncherActivity extends BaseActivity {
             return false;
         }
 
-        installDefaultModpackAndLaunch();
+        LauncherProfiles.load();
+
+        for (String profileName : LauncherProfiles.mainProfileJson.profiles.keySet()) {
+            MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(profileName);
+            if(prof.name.equals(DEFAULT_MODPACK.title)) {
+                mSelectedProfile = profileName;
+            }
+        }
+
+        boolean hasDefaultProfile = LauncherProfiles.mainProfileJson != null &&
+                LauncherProfiles.mainProfileJson.profiles != null &&
+                LauncherProfiles.mainProfileJson.profiles.containsKey(mSelectedProfile);
+
+        if(!hasDefaultProfile) {
+            Toast.makeText(this, "Instalando modpack padrão...", Toast.LENGTH_SHORT).show();
+
+            installDefaultModpack(success -> {
+                if (success) {
+                    launchGameAfterModpackInstall(mSelectedProfile);
+                } else {
+                    Toast.makeText(LauncherActivity.this, "Falha na instalação do modpack padrão.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            launchGameAfterModpackInstall(mSelectedProfile);
+        }
 
         return false;
     };
+
+    private void launchGameAfterModpackInstall(String profileName) {
+        LauncherProfiles.load();
+        MinecraftProfile prof = LauncherProfiles.mainProfileJson != null && LauncherProfiles.mainProfileJson.profiles != null
+                ? LauncherProfiles.mainProfileJson.profiles.get(profileName)
+                : null;
+
+        if (prof == null || prof.lastVersionId == null || "Unknown".equals(prof.lastVersionId)) {
+            Toast.makeText(this, R.string.error_no_version, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        LauncherPreferences.DEFAULT_PREF.edit()
+                .putString(
+                        LauncherPreferences.PREF_KEY_CURRENT_PROFILE,
+                        mSelectedProfile
+                )
+                .apply();
+
+        String normalizedVersionId = AsyncMinecraftDownloader.normalizeVersionId(prof.lastVersionId);
+        JMinecraftVersionList.Version mcVersion = AsyncMinecraftDownloader.getListedVersion(normalizedVersionId);
+
+        new MinecraftDownloader().start(
+                this,
+                mcVersion,
+                normalizedVersionId,
+                new ContextAwareDoneListener(this, normalizedVersionId)
+        );
+    }
 
     private final TaskCountListener mDoubleLaunchPreventionListener = taskCount -> {
         // Hide the notification that starts the game if there are tasks executing.
@@ -329,64 +392,63 @@ public class LauncherActivity extends BaseActivity {
         mProgressLayout = findViewById(R.id.progress_layout);
     }
 
-    private static final ModItem DEFAULT_MODPACK = new ModItem(
-            Constants.SOURCE_MODRINTH,
-            true,
-            "II8o4caK",
-            "Avalon Cobblemon Oficial",
-            "Pack com Cobblemon e mods de performance…",
-            "https://cdn.modrinth.com/data/II8o4caK/8b781cd51b32314f896c39a97808204b37858928_96.webp"
-    );
+    public interface ModpackInstallListener {
+        void onInstallComplete(boolean success);
+    }
 
-    private void installDefaultModpackAndLaunch() {
+    private void installDefaultModpack(ModpackInstallListener listener) {
         LauncherProfiles.load();
-
         CommonApi api = new CommonApi(getString(R.string.curseforge_api_key));
-        ExecutorService exec = Executors.newSingleThreadExecutor();
-        exec.execute(() -> {
+        new Thread(() -> {
             try {
                 ModDetail detail = api.getModDetails(DEFAULT_MODPACK);
                 api.handleInstallation(getApplicationContext(), detail, 0);
 
+                while (!MODPACK_DOWNLOAD_FINISH) {
+                    try {
+                        Thread.sleep(100); // Sleep for 100 milliseconds
+                    } catch (InterruptedException e) {
+                    }
+                }
+
                 LauncherProfiles.load();
-                String lastProfileName = null;
                 for (String profileName : LauncherProfiles.mainProfileJson.profiles.keySet()) {
-                    lastProfileName = profileName;
+                    MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(profileName);
+                    if(prof.name.equals(DEFAULT_MODPACK.title)) {
+                        mSelectedProfile = profileName;
+                    }
                 }
 
                 LauncherPreferences.DEFAULT_PREF.edit()
                         .putString(
                                 LauncherPreferences.PREF_KEY_CURRENT_PROFILE,
-                                lastProfileName
+                                mSelectedProfile
                         )
                         .apply();
 
-                MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(lastProfileName);
-                if (prof == null || prof.lastVersionId == null || "Unknown".equals(prof.lastVersionId)){
-                    Toast.makeText(this, R.string.error_no_version, Toast.LENGTH_LONG).show();
-                    return;
-                }
+                boolean installSuccess = true;
 
-                String versionId = detail.mcVersionNames[0];
-                JMinecraftVersionList.Version mcVersion =
-                        AsyncMinecraftDownloader.getListedVersion(versionId);
-
-                new MinecraftDownloader().start(
-                        this,
-                        mcVersion,
-                        versionId,
-                        new ContextAwareDoneListener(this, versionId)
-                );
+                runOnUiThread(() -> {
+                    if (listener != null) {
+                        listener.onInstallComplete(installSuccess);
+                    }
+                });
             } catch (Exception e) {
+                boolean installSuccess = false;
+
                 e.printStackTrace();
-                runOnUiThread(() ->
-                        Toast.makeText(
-                                this,
-                                "Falha ao baixar client",
-                                Toast.LENGTH_LONG
-                        ).show()
-                );
+                runOnUiThread(() -> {
+                    if (listener != null) {
+                        listener.onInstallComplete(installSuccess);
+                    }
+
+                    Toast.makeText(
+                            this,
+                            "Falha ao baixar client",
+                            Toast.LENGTH_LONG
+                    ).show();
+                });
             }
-        });
+        }).start();
     }
 }

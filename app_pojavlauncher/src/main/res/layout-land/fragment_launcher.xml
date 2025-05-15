@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:foreground="@drawable/foreground_gradient_banner"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/minecraft_banner" />
+            app:srcCompat="@drawable/backgroundseason_land" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,16 +48,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_black"
-                    android:text="Lorem Ipsum is dummy text of"
+                    android:text="Temporada Celestial"
                     android:textColor="@color/primary_text"
-                    android:textSize="36sp" />
+                    android:textSize="32sp" />
 
                 <TextView
                     android:id="@+id/news_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_regular"
-                    android:text="Descubra mundos enormes sem fronteiras cheios de diversão e milhões de amigos."
+                    android:text="Se deu início a temporada celestial, junte-se a vários outros jogadores e receba recompensas exclusivas durante toda a temporada!"
                     android:textColor="@color/primary_text"
                     android:textSize="18sp" />
 
@@ -102,6 +102,7 @@
                         android:layout_height="@dimen/_60sdp"
 
 
+                        android:background="@drawable/mine_button_background"
                         android:fontFamily="@font/montserrat_black"
                         android:text="@string/main_play"
                         android:textAllCaps="true"
