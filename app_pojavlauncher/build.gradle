@@ -90,7 +90,7 @@ configurations {
 android {
     namespace 'net.kdt.pojavlaunch'
 
-    compileSdk = 34
+    compileSdk = 35
 
     lintOptions {
         abortOnError false
@@ -112,7 +112,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.avaloncobblemon.launch"
+        applicationId "br.com.netpixelmon.launch"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode getDateSeconds()
@@ -128,9 +128,9 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.customDebug
-            resValue 'string', 'application_package', 'com.avaloncobblemon.launch.debug'
-            resValue 'string', 'storageProviderAuthorities', 'com.avaloncobblemon.launch.scoped.gamefolder.debug'
-            resValue 'string', 'shareProviderAuthority', 'com.avaloncobblemon.launch.scoped.controlfolder.debug'
+            resValue 'string', 'application_package', 'br.com.netpixelmon.launch.debug'
+            resValue 'string', 'storageProviderAuthorities', 'br.com.netpixelmon.launch.scoped.gamefolder.debug'
+            resValue 'string', 'shareProviderAuthority', 'br.com.netpixelmon.launch.scoped.controlfolder.debug'
         }
         proguard {
             initWith debug
@@ -149,8 +149,8 @@ android {
             // defaultConfig already set
             // multiDexEnabled = true
             // debuggable = true
-            resValue 'string', 'storageProviderAuthorities', 'com.avaloncobblemon.launch.scoped.gamefolder'
-            resValue 'string', 'application_package', 'com.avaloncobblemon.launch'
+            resValue 'string', 'storageProviderAuthorities', 'br.com.netpixelmon.launch.scoped.gamefolder'
+            resValue 'string', 'application_package', 'br.com.netpixelmon.launch'
         }
         gplay {
             initWith release

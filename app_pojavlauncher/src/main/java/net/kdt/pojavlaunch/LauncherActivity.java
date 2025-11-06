@@ -59,10 +59,10 @@ public class LauncherActivity extends BaseActivity {
     private static final ModItem DEFAULT_MODPACK = new ModItem(
             Constants.SOURCE_MODRINTH,
             true,
-            "II8o4caK",
-            "Avalon Cobblemon Oficial",
-            "Pack com Cobblemon e mods de performance…",
-            "https://cdn.modrinth.com/data/II8o4caK/8b781cd51b32314f896c39a97808204b37858928_96.webp"
+            "bynEcDAP",
+            "NetPixelmon - Pojav",
+            "Set out on the greatest Pixelmon adventure, delivering the highest quality experience and performance the Pixelmon world can offer.",
+            "https://cdn.modrinth.com/data/bynEcDAP/7bff05d20b500ff4686f4b092885302aeb293b10_96.webp"
     );
 
     public final ActivityResultLauncher<Object> modInstallerLauncher =
@@ -240,7 +240,7 @@ public class LauncherActivity extends BaseActivity {
         ProgressKeeper.addTaskCountListener((mProgressServiceKeeper = new ProgressServiceKeeper(this)));
 
         mHomeButton.setOnClickListener(v -> Tools.swapFragment(this, MainMenuFragment.class, MainMenuFragment.TAG, null));
-        mInstagramButton.setOnClickListener(v -> Tools.openURL(this, getString(R.string.instagram_invite)));
+        mInstagramButton.setOnClickListener(v -> Tools.openURL(this, getString(R.string.tiktok_invite)));
         mDiscordButton.setOnClickListener(v -> Tools.openURL(this, getString(R.string.discord_invite)));
         mSettingsButton.setOnClickListener(v -> Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null));
         ProgressKeeper.addTaskCountListener(mProgressLayout);
@@ -385,7 +385,7 @@ public class LauncherActivity extends BaseActivity {
     private void bindViews(){
         mFragmentView = findViewById(R.id.container_fragment);
         mHomeButton = findViewById(R.id.home_button);
-        mInstagramButton = findViewById(R.id.instagram_button);
+        mInstagramButton = findViewById(R.id.tiktok_button);
         mDiscordButton = findViewById(R.id.discord_button);
         mSettingsButton = findViewById(R.id.setting_button);
         mAccountSpinner = findViewById(R.id.account_spinner);

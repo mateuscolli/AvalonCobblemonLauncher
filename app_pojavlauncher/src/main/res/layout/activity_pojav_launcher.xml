@@ -53,12 +53,12 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/padding_large"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/instagram_button"
+            app:layout_constraintEnd_toStartOf="@id/tiktok_button"
             app:layout_constraintStart_toEndOf="@id/home_button"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/instagram_button"
+            android:id="@+id/tiktok_button"
             style="@style/LauncherMenuButton.Universal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
 
             android:paddingVertical="@dimen/_8sdp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_instagram"
+            android:src="@drawable/ic_tiktok"
             app:layout_constraintEnd_toStartOf="@id/divider1"
             app:layout_constraintStart_toEndOf="@id/divider" />
 
@@ -77,7 +77,7 @@
             android:layout_marginVertical="@dimen/padding_large"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/discord_button"
-            app:layout_constraintStart_toEndOf="@id/instagram_button"
+            app:layout_constraintStart_toEndOf="@id/tiktok_button"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton

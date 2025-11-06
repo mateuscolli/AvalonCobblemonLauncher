@@ -21,15 +21,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.content.res.ResourcesCompat;
-
-
 import net.kdt.pojavlaunch.PojavProfile;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
@@ -41,19 +38,12 @@ import net.kdt.pojavlaunch.authenticator.microsoft.MicrosoftBackgroundLogin;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.extra.ExtraListener;
-import net.kdt.pojavlaunch.services.McStatusService;
 import net.kdt.pojavlaunch.value.MinecraftAccount;
-
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.OnItemSelectedListener {
     public mcAccountSpinner(@NonNull Context context) {
@@ -90,11 +80,6 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
         }
         mLoginBarAnimator.start();
     };
-
-    // Define the server address and port
-    private static final String SERVER_ADDRESS = "jogar.avaloncobblemon.com";
-    private static final int SERVER_PORT = 0;
-    private static final int CHECK_INTERVAL = 60000;
 
     private final DoneListener mDoneListener = account -> {
         Toast.makeText(getContext(), R.string.main_login_done, Toast.LENGTH_SHORT).show();
@@ -315,51 +300,6 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
         setImageFromSelectedAccount();
     }
 
-    private void startServerStatusCheck(View view) {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                checkServerStatus(view);
-            }
-        }, 0, CHECK_INTERVAL);
-    }
-
-    private void checkServerStatus(View view) {
-        String serverIp = SERVER_ADDRESS;
-        if(SERVER_PORT != 0) serverIp = serverIp + ":" + SERVER_PORT;
-
-        McStatusService.fetchServerStatus(serverIp, new McStatusService.McStatusCallback() {
-            @Override
-            public void onSuccess(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    updateServerStatusUI(view, jsonObject.getBoolean("online"));
-                } catch (Exception e) {
-                    Log.e("MC_STATUS", "Erro ao analisar a resposta: " + e.getMessage(), e);
-                }
-            }
-
-            @Override
-            public void onError(Exception e) {
-                updateServerStatusUI(view, false);
-            }
-        });
-    }
-
-    private void updateServerStatusUI(View view, boolean isOnline) {
-        TextView textStatus = view.findViewById(R.id.text_status);
-        ImageView icStatus = view.findViewById(R.id.ic_status);
-
-        if (isOnline) {
-            textStatus.setText("Online");
-            icStatus.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_server_status_online, null));
-        } else {
-            textStatus.setText("Offline");
-            icStatus.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_server_status_offline, null));
-        }
-    }
-
     @Deprecated()
     /* Legacy behavior, update the head image manually for the selected account */
     private void setImageFromSelectedAccount(){
@@ -405,8 +345,6 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
             accountImage.setClipToOutline(true);
             ImageView deleteButton = convertView.findViewById(R.id.delete_account_button);
             textview.setText(super.getItem(position));
-            LinearLayout statusServer = convertView.findViewById(R.id.status_server);
-            statusServer.setVisibility(View.GONE);
             ImageView arrowDropdown = convertView.findViewById(R.id.arrow_dropdown);
             arrowDropdown.setVisibility(View.GONE);
 
@@ -447,17 +385,8 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
             ImageView arrowDropdown = view.findViewById(R.id.arrow_dropdown);
             arrowDropdown.setVisibility(View.VISIBLE);
 
-            LinearLayout statusServer = view.findViewById(R.id.status_server);
-            statusServer.setVisibility(View.VISIBLE);
-            TextView textStatus = view.findViewById(R.id.text_status);
-            textStatus.setText("Online");
-            ImageView icStatus = view.findViewById(R.id.ic_status);
-            icStatus.setImageDrawable(ResourcesCompat.getDrawable(parent.getResources(), R.drawable.ic_server_status_online, null));
-
             LinearLayout layoutAccount = view.findViewById(R.id.layout_account);
             layoutAccount.setPadding(0, 0, 0, 0);
-
-            startServerStatusCheck(view);
 
             return view;
         }

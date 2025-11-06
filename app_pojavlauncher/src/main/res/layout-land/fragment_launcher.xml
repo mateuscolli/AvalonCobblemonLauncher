@@ -5,7 +5,7 @@
     android:id="@+id/fragment_menu_main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/background_app"
+    android:background="@drawable/background_app"
     android:gravity="top"
     android:orientation="vertical"
     android:padding="@dimen/_15sdp">
@@ -14,7 +14,7 @@
         android:id="@+id/frame_banner"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/background_news"
+        android:background="@drawable/background_news_border"
         android:clipToOutline="true"
         android:outlineProvider="background"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,95 +22,107 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageView4"
+        <FrameLayout
+            android:id="@+id/frame_banner_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:foreground="@drawable/foreground_gradient_banner"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/backgroundseason_land" />
+            android:layout_margin="6dp"
+            android:background="@drawable/background_news"
+            android:clipToOutline="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="right"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="@dimen/_400sdp"
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="bottom"
-                android:orientation="vertical"
-                android:padding="@dimen/_15sdp">
-
-                <TextView
-                    android:id="@+id/news_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_black"
-                    android:text="Temporada Celestial"
-                    android:textColor="@color/primary_text"
-                    android:textSize="32sp" />
-
-                <TextView
-                    android:id="@+id/news_subtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_regular"
-                    android:text="Se deu início a temporada celestial, junte-se a vários outros jogadores e receba recompensas exclusivas durante toda a temporada!"
-                    android:textColor="@color/primary_text"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
+                android:foreground="@drawable/foreground_gradient_banner"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/backgroundseason_land" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="top"
-                android:orientation="vertical"
-                android:padding="@dimen/_15sdp">
+                android:gravity="right"
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/linearLayout2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_editor_absoluteX="19dp">
+                    android:layout_width="@dimen/_400sdp"
+                    android:layout_height="match_parent"
+                    android:gravity="bottom"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_15sdp">
 
-                    <com.kdt.mcgui.mcAccountSpinner
-                        android:id="@+id/account_spinner"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/_52sdp"
-                        android:layout_weight="1"
-                        android:dropDownWidth="match_parent"
-                        android:dropDownVerticalOffset="@dimen/_52sdp"
-                        android:background="@color/transparent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/news_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_black"
+                        android:text="Temporada Spring"
+                        android:textColor="@color/primary_text"
+                        android:textSize="32sp" />
+
+                    <TextView
+                        android:id="@+id/news_subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:text="Se deu início a temporada spring, junte-se a vários outros jogadores e receba recompensas exclusivas durante toda a temporada!"
+                        android:textColor="@color/primary_text"
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="bottom"
-                    android:orientation="vertical">
+                    android:gravity="top"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_15sdp">
 
-                    <com.kdt.mcgui.MineButton
-                        android:id="@+id/play_button"
+                    <LinearLayout
+                        android:id="@+id/linearLayout2"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_60sdp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="19dp">
+
+                        <com.kdt.mcgui.mcAccountSpinner
+                            android:id="@+id/account_spinner"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_52sdp"
+                            android:layout_weight="1"
+                            android:background="@color/transparent"
+                            android:dropDownWidth="match_parent"
+                            android:dropDownVerticalOffset="@dimen/_52sdp"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom"
+                        android:orientation="vertical">
+
+                        <com.kdt.mcgui.MineButton
+                            android:id="@+id/play_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_60sdp"
 
 
-                        android:background="@drawable/mine_button_background"
-                        android:fontFamily="@font/montserrat_black"
-                        android:text="@string/main_play"
-                        android:textAllCaps="true"
-                        android:textSize="@dimen/_20ssp" />
+                            android:background="@drawable/mine_button_background"
+                            android:fontFamily="@font/montserrat_black"
+                            android:text="@string/main_play"
+                            android:textAllCaps="true"
+                            android:textColor="#121212"
+                            android:textSize="@dimen/_20ssp" />
+                    </LinearLayout>
                 </LinearLayout>
+
             </LinearLayout>
 
-        </LinearLayout>
+        </FrameLayout>
 
     </FrameLayout>
 

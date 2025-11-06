@@ -20,9 +20,13 @@ public class MainMenuFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        FrameLayout frameBanner = view.findViewById(R.id.frame_banner);
+        FrameLayout frameBanner = view.findViewById(R.id.frame_banner_content);
         frameBanner.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
         frameBanner.setClipToOutline(true);
+
+        FrameLayout frameContent = view.findViewById(R.id.frame_banner_content);
+        frameContent.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
+        frameContent.setClipToOutline(true);
 
         Button mPlayButton = view.findViewById(R.id.play_button);
         mPlayButton.setOnClickListener(v -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@color/background_app"
+    android:background="@drawable/background_app"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -17,11 +17,11 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/ic_avalon_full"
-            android:layout_width="@dimen/_100sdp"
-            android:layout_height="@dimen/_100sdp"
+            android:id="@+id/ic_logo"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_130sdp"
             android:layout_marginBottom="10dp"
-            app:srcCompat="@drawable/ic_avalon_full" />
+            app:srcCompat="@drawable/ic_logo" />
 
         <TextView
             android:id="@+id/textView"

@@ -5,7 +5,7 @@
 	android:id="@+id/fragment_menu_main"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:background="@color/background_app"
+	android:background="@drawable/background_app"
 	android:gravity="top"
 	android:orientation="vertical"
 	app:layout_constraintLeft_toLeftOf="parent">
@@ -31,9 +31,9 @@
 				android:layout_width="match_parent"
 				android:layout_height="@dimen/_52sdp"
 				android:layout_weight="1"
+				android:background="@color/transparent"
 				android:dropDownWidth="match_parent"
 				android:dropDownVerticalOffset="@dimen/_52sdp"
-				android:background="@color/transparent"
 				app:layout_constraintTop_toTopOf="parent" />
 
 		</LinearLayout>
@@ -44,47 +44,58 @@
 			android:layout_height="0dp"
 			android:layout_marginTop="@dimen/_15sdp"
 			android:layout_marginBottom="@dimen/_15sdp"
-			android:background="@drawable/background_news"
+			android:background="@drawable/background_news_border"
 			android:clipToOutline="true"
 			app:layout_constraintBottom_toTopOf="@+id/play_button"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
-			<ImageView
-				android:id="@+id/imageView4"
+			<FrameLayout
+				android:id="@+id/frame_banner_content"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:foreground="@drawable/foreground_gradient_banner"
-				android:scaleType="centerCrop"
-				app:srcCompat="@drawable/backgroundseason" />
+				android:layout_margin="6dp"
+				android:background="@drawable/background_news"
+				android:clipToOutline="true">
 
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:gravity="bottom"
-				android:orientation="vertical"
-				android:padding="@dimen/_15sdp">
-
-				<TextView
-					android:id="@+id/news_title"
+				<ImageView
+					android:id="@+id/imageView4"
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:fontFamily="@font/montserrat_black"
-					android:text="Temporada Celestial"
-					android:textColor="@color/primary_text"
-					android:textSize="30sp" />
+					android:layout_height="match_parent"
+					android:foreground="@drawable/foreground_gradient_banner"
+					android:scaleType="centerCrop"
+					android:visibility="visible"
+					app:srcCompat="@drawable/backgroundseason" />
 
-				<TextView
-					android:id="@+id/news_subtitle"
+				<LinearLayout
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:fontFamily="@font/montserrat_regular"
-					android:text="Se deu início a temporada celestial, junte-se a vários outros jogadores e receba recompensas exclusivas durante toda a temporada!"
-					android:textColor="@color/primary_text"
-					android:textSize="18sp" />
+					android:layout_height="match_parent"
+					android:gravity="bottom"
+					android:orientation="vertical"
+					android:padding="@dimen/_15sdp">
 
-			</LinearLayout>
+					<TextView
+						android:id="@+id/news_title"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:fontFamily="@font/montserrat_black"
+						android:text="Temporada Spring"
+						android:textColor="@color/primary_text"
+						android:textSize="30sp" />
+
+					<TextView
+						android:id="@+id/news_subtitle"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:fontFamily="@font/montserrat_regular"
+						android:text="Se deu início a temporada spring, junte-se a vários outros jogadores e receba recompensas exclusivas durante toda a temporada!"
+						android:textColor="@color/primary_text"
+						android:textSize="18sp" />
+
+				</LinearLayout>
+
+			</FrameLayout>
 
 		</FrameLayout>
 
@@ -100,6 +111,7 @@
 			android:fontFamily="@font/montserrat_black"
 			android:text="@string/main_play"
 			android:textAllCaps="true"
+			android:textColor="#121212"
 			android:textSize="@dimen/_20ssp"
 			app:layout_constraintBottom_toBottomOf="parent"
 			tools:layout_editor_absoluteX="19dp" />
