@@ -4,9 +4,11 @@ import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.gms.security.ProviderInstaller;
 import com.kdt.mcgui.ProgressLayout;
 import com.kdt.mcgui.mcAccountSpinner;
 
@@ -32,6 +35,8 @@ import net.kdt.pojavlaunch.fragments.MicrosoftLoginFragment;
 import net.kdt.pojavlaunch.fragments.SelectAuthFragment;
 import net.kdt.pojavlaunch.lifecycle.ContextAwareDoneListener;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
+import net.kdt.pojavlaunch.modloaders.ForgeDownloadTask;
+import net.kdt.pojavlaunch.modloaders.ModloaderListenerProxy;
 import net.kdt.pojavlaunch.modloaders.modpacks.ModloaderInstallTracker;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.IconCacheJanitor;
@@ -73,7 +78,7 @@ public class LauncherActivity extends BaseActivity {
     private mcAccountSpinner mAccountSpinner;
     private FragmentContainerView mFragmentView;
     private ImageButton mHomeButton;
-    private ImageButton mInstagramButton;
+    private ImageButton mTiktokButton;
     private ImageButton mDiscordButton;
     private ImageButton mSettingsButton;
     private ProgressLayout mProgressLayout;
@@ -81,6 +86,7 @@ public class LauncherActivity extends BaseActivity {
     private ModloaderInstallTracker mInstallTracker;
     private NotificationManager mNotificationManager;
     private String mSelectedProfile;
+    private CommonApi api;
 
     /* Allows to switch from one button "type" to another */
     private final FragmentManager.FragmentLifecycleCallbacks mFragmentCallbackListener = new FragmentManager.FragmentLifecycleCallbacks() {
@@ -126,8 +132,9 @@ public class LauncherActivity extends BaseActivity {
 
         for (String profileName : LauncherProfiles.mainProfileJson.profiles.keySet()) {
             MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(profileName);
-            if(prof.name.equals(DEFAULT_MODPACK.title)) {
+            if (prof != null && prof.name.toLowerCase().contains("forge")) {
                 mSelectedProfile = profileName;
+                break;
             }
         }
 
@@ -146,40 +153,31 @@ public class LauncherActivity extends BaseActivity {
                 }
             });
         } else {
-            launchGameAfterModpackInstall(mSelectedProfile);
+            checkModpackVersion((updated, newVersion) -> {
+                if (updated) {
+                    launchGameAfterModpackInstall(mSelectedProfile);
+                } else {
+                    Toast.makeText(LauncherActivity.this, "Atualizando modpack.", Toast.LENGTH_SHORT).show();
+                    installDefaultModpack(success -> {
+                        if (success) {
+                            LauncherPreferences.DEFAULT_PREF.edit()
+                                    .putString(
+                                            LauncherPreferences.PREF_MODPACK_VERSION,
+                                            newVersion
+                                    )
+                                    .apply();
+
+                            launchGameAfterModpackInstall(mSelectedProfile);
+                        } else {
+                            Toast.makeText(LauncherActivity.this, "Falha na instalação do modpack padrão.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
         }
 
         return false;
     };
-
-    private void launchGameAfterModpackInstall(String profileName) {
-        LauncherProfiles.load();
-        MinecraftProfile prof = LauncherProfiles.mainProfileJson != null && LauncherProfiles.mainProfileJson.profiles != null
-                ? LauncherProfiles.mainProfileJson.profiles.get(profileName)
-                : null;
-
-        if (prof == null || prof.lastVersionId == null || "Unknown".equals(prof.lastVersionId)) {
-            Toast.makeText(this, R.string.error_no_version, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        LauncherPreferences.DEFAULT_PREF.edit()
-                .putString(
-                        LauncherPreferences.PREF_KEY_CURRENT_PROFILE,
-                        mSelectedProfile
-                )
-                .apply();
-
-        String normalizedVersionId = AsyncMinecraftDownloader.normalizeVersionId(prof.lastVersionId);
-        JMinecraftVersionList.Version mcVersion = AsyncMinecraftDownloader.getListedVersion(normalizedVersionId);
-
-        new MinecraftDownloader().start(
-                this,
-                mcVersion,
-                normalizedVersionId,
-                new ContextAwareDoneListener(this, normalizedVersionId)
-        );
-    }
 
     private final TaskCountListener mDoubleLaunchPreventionListener = taskCount -> {
         // Hide the notification that starts the game if there are tasks executing.
@@ -207,6 +205,17 @@ public class LauncherActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ProviderInstaller.installIfNeededAsync(this, new ProviderInstaller.ProviderInstallListener() {
+            @Override
+            public void onProviderInstalled() {
+            }
+
+            @Override
+            public void onProviderInstallFailed(int i, Intent intent) {
+            }
+        });
+
         setContentView(R.layout.activity_pojav_launcher);
         FragmentManager fragmentManager = getSupportFragmentManager();
         // If we don't have a back stack root yet...
@@ -240,7 +249,7 @@ public class LauncherActivity extends BaseActivity {
         ProgressKeeper.addTaskCountListener((mProgressServiceKeeper = new ProgressServiceKeeper(this)));
 
         mHomeButton.setOnClickListener(v -> Tools.swapFragment(this, MainMenuFragment.class, MainMenuFragment.TAG, null));
-        mInstagramButton.setOnClickListener(v -> Tools.openURL(this, getString(R.string.tiktok_invite)));
+        mTiktokButton.setOnClickListener(v -> Tools.openURL(this, getString(R.string.tiktok_invite)));
         mDiscordButton.setOnClickListener(v -> Tools.openURL(this, getString(R.string.discord_invite)));
         mSettingsButton.setOnClickListener(v -> Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null));
         ProgressKeeper.addTaskCountListener(mProgressLayout);
@@ -252,6 +261,7 @@ public class LauncherActivity extends BaseActivity {
         new AsyncVersionList().getVersionList(versions -> ExtraCore.setValue(ExtraConstants.RELEASE_TABLE, versions), false);
 
         mInstallTracker = new ModloaderInstallTracker(this);
+        api = new CommonApi(getString(R.string.curseforge_api_key));
 
         mProgressLayout.observe(ProgressLayout.DOWNLOAD_MINECRAFT);
         mProgressLayout.observe(ProgressLayout.UNPACK_RUNTIME);
@@ -385,7 +395,7 @@ public class LauncherActivity extends BaseActivity {
     private void bindViews(){
         mFragmentView = findViewById(R.id.container_fragment);
         mHomeButton = findViewById(R.id.home_button);
-        mInstagramButton = findViewById(R.id.tiktok_button);
+        mTiktokButton = findViewById(R.id.tiktok_button);
         mDiscordButton = findViewById(R.id.discord_button);
         mSettingsButton = findViewById(R.id.setting_button);
         mAccountSpinner = findViewById(R.id.account_spinner);
@@ -398,24 +408,36 @@ public class LauncherActivity extends BaseActivity {
 
     private void installDefaultModpack(ModpackInstallListener listener) {
         LauncherProfiles.load();
-        CommonApi api = new CommonApi(getString(R.string.curseforge_api_key));
+
         new Thread(() -> {
             try {
-                ModDetail detail = api.getModDetails(DEFAULT_MODPACK);
-                api.handleInstallation(getApplicationContext(), detail, 0);
+                ModloaderInstaller loaderInstaller = new ModloaderInstaller(this, ModloaderInstaller.LoaderType.FORGE);
+                loaderInstaller.installLoader("1.16.5", "36.2.42");
 
-                while (!MODPACK_DOWNLOAD_FINISH) {
+                boolean loaderInstalled = false;
+                while (!loaderInstalled) {
                     try {
-                        Thread.sleep(100); // Sleep for 100 milliseconds
-                    } catch (InterruptedException e) {
+                        LauncherProfiles.load();
+                        for (String profileName : LauncherProfiles.mainProfileJson.profiles.keySet()) {
+                            MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(profileName);
+                            if (prof != null && prof.name.toLowerCase().contains("forge")) {
+                                mSelectedProfile = profileName;
+                                loaderInstalled = true;
+                            }
+                        }
+
+                        Thread.sleep(500);
+                    } catch (InterruptedException ignored) {
                     }
                 }
 
-                LauncherProfiles.load();
-                for (String profileName : LauncherProfiles.mainProfileJson.profiles.keySet()) {
-                    MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(profileName);
-                    if(prof.name.equals(DEFAULT_MODPACK.title)) {
-                        mSelectedProfile = profileName;
+                ModDetail detail = api.getModDetails(DEFAULT_MODPACK);
+                api.handleInstallation(this, detail, 0);
+
+                while (!MODPACK_DOWNLOAD_FINISH) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ignored) {
                     }
                 }
 
@@ -450,5 +472,71 @@ public class LauncherActivity extends BaseActivity {
                 });
             }
         }).start();
+    }
+
+    public interface ModpackVersionListener {
+        void onCheckComplete(boolean success, String newVersion);
+    }
+
+    private void checkModpackVersion(ModpackVersionListener listener) {
+        new Thread(() -> {
+            try {
+                ModDetail detail = api.getModDetails(DEFAULT_MODPACK);
+                String newVersion = detail.versionNames[0];
+
+                String modpackVersion = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_MODPACK_VERSION, "");
+                boolean updated = modpackVersion.equals(newVersion);
+
+                runOnUiThread(() -> {
+                    if (listener != null) {
+                        listener.onCheckComplete(updated, newVersion);
+                    }
+                });
+            } catch (Exception e) {
+                boolean updated = false;
+
+                e.printStackTrace();
+                runOnUiThread(() -> {
+                    if (listener != null) {
+                        listener.onCheckComplete(updated, "");
+                    }
+
+                    Toast.makeText(
+                            this,
+                            "Falha ao checar atualização do modpack",
+                            Toast.LENGTH_LONG
+                    ).show();
+                });
+            }
+        }).start();
+    }
+
+    private void launchGameAfterModpackInstall(String profileName) {
+        LauncherProfiles.load();
+        MinecraftProfile prof = LauncherProfiles.mainProfileJson != null && LauncherProfiles.mainProfileJson.profiles != null
+                ? LauncherProfiles.mainProfileJson.profiles.get(profileName)
+                : null;
+
+        if (prof == null || prof.lastVersionId == null || "Unknown".equals(prof.lastVersionId)) {
+            Toast.makeText(this, R.string.error_no_version, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        LauncherPreferences.DEFAULT_PREF.edit()
+                .putString(
+                        LauncherPreferences.PREF_KEY_CURRENT_PROFILE,
+                        mSelectedProfile
+                )
+                .apply();
+
+        String normalizedVersionId = AsyncMinecraftDownloader.normalizeVersionId(prof.lastVersionId);
+        JMinecraftVersionList.Version mcVersion = AsyncMinecraftDownloader.getListedVersion(normalizedVersionId);
+
+        new MinecraftDownloader().start(
+                this,
+                mcVersion,
+                normalizedVersionId,
+                new ContextAwareDoneListener(this, normalizedVersionId)
+        );
     }
 }

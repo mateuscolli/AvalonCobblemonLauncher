@@ -101,7 +101,7 @@ import java.util.Map;
 public final class Tools {
     public  static final float BYTE_TO_MB = 1024 * 1024;
     public static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-    public static String APP_NAME = "PojavLauncher";
+    public static String APP_NAME = "NetPixelmon Launcher";
 
     public static final Gson GLOBAL_GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -116,8 +116,9 @@ public final class Tools {
 
     // New since 3.3.1
     public static String DIR_ACCOUNT_NEW;
-    public static String DIR_GAME_HOME = Environment.getExternalStorageDirectory().getAbsolutePath() + "/games/PojavLauncher";
+    public static String DIR_GAME_HOME = Environment.getExternalStorageDirectory().getAbsolutePath() + "/games/NetPixelmonLauncher";
     public static String DIR_GAME_NEW;
+    public static String GAME_PROFILES_FILE;
 
     // New since 3.0.0
     public static String DIRNAME_HOME_JRE = "lib";
@@ -139,7 +140,7 @@ public final class Tools {
         if(SDK_INT >= 29) {
             return ctx.getExternalFilesDir(null);
         }else{
-            return new File(Environment.getExternalStorageDirectory(),"games/PojavLauncher");
+            return new File(Environment.getExternalStorageDirectory(),"games/NetPixelmonLauncher");
         }
     }
 
@@ -200,6 +201,7 @@ public final class Tools {
         OBSOLETE_RESOURCES_PATH = DIR_GAME_NEW + "/resources";
         CTRLMAP_PATH = DIR_GAME_HOME + "/controlmap";
         CTRLDEF_FILE = DIR_GAME_HOME + "/controlmap/default.json";
+        GAME_PROFILES_FILE = Tools.DIR_GAME_NEW + "/launcher_profiles.json";
     }
 
     /**
@@ -272,8 +274,8 @@ public final class Tools {
         if(LauncherPreferences.PREF_RAM_ALLOCATION > freeDeviceMemory) {
             int finalDeviceMemory = freeDeviceMemory;
             LifecycleAwareAlertDialog.DialogCreator dialogCreator = (dialog, builder) ->
-                builder.setMessage(activity.getString(localeString, finalDeviceMemory, LauncherPreferences.PREF_RAM_ALLOCATION))
-                        .setPositiveButton(android.R.string.ok, (d, w)->{});
+                    builder.setMessage(activity.getString(localeString, finalDeviceMemory, LauncherPreferences.PREF_RAM_ALLOCATION))
+                            .setPositiveButton(android.R.string.ok, (d, w)->{});
 
             if(LifecycleAwareAlertDialog.haltOnDialog(activity.getLifecycle(), activity, dialogCreator)) {
                 return; // If the dialog's lifecycle has ended, return without
@@ -461,7 +463,7 @@ public final class Tools {
     }
 
     public static String[] getMinecraftClientArgs(MinecraftAccount profile, JMinecraftVersionList.Version versionInfo, File gameDir) {
-        String username = profile.username;
+        String username = profile.username.replace("Demo.", "");
         String versionName = versionInfo.id;
         if (versionInfo.inheritsFrom != null) {
             versionName = versionInfo.inheritsFrom;
@@ -506,13 +508,11 @@ public final class Tools {
             }
         }
 
-        return JSONUtils.insertJSONValueList(
-                splitAndFilterEmpty(
-                        versionInfo.minecraftArguments == null ?
-                                fromStringArray(minecraftArgs.toArray(new String[0])):
-                                versionInfo.minecraftArguments
-                ), varArgMap
-        );
+        String mcArguments = versionInfo.minecraftArguments == null ?
+                fromStringArray(minecraftArgs.toArray(new String[0])):
+                versionInfo.minecraftArguments;
+
+        return JSONUtils.insertJSONValueList(splitAndFilterEmpty(mcArguments), varArgMap);
     }
 
     public static String fromStringArray(String[] strArr) {
@@ -1387,7 +1387,7 @@ public final class Tools {
 
     /** Checks if the renderer Id is compatible with the current device */
     public static boolean checkRendererCompatible(Context context, String rendererName) {
-         return getCompatibleRenderers(context).rendererIds.contains(rendererName);
+        return getCompatibleRenderers(context).rendererIds.contains(rendererName);
     }
 
     /** Releases the cache of compatible renderers. */

@@ -57,6 +57,11 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        System.setProperty("jna.nosys", "true");
+        System.setProperty("jna.boot.library.path",
+                getApplicationInfo().nativeLibraryDir
+        );
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_java_gui_launcher);
 

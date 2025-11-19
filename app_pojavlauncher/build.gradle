@@ -230,4 +230,6 @@ dependencies {
     // implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    implementation 'com.google.android.gms:play-services-base:18.1.0'
 }

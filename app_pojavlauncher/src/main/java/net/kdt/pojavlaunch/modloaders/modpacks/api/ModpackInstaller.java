@@ -5,12 +5,9 @@ import com.kdt.mcgui.ProgressLayout;
 import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
-import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.ModIconCache;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
 import net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper;
 import net.kdt.pojavlaunch.utils.DownloadUtils;
-import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
-import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +43,7 @@ public class ModpackInstaller {
             });
 
             // Install the modpack
-            modLoaderInfo = installFunction.installModpack(modpackFile, new File(Tools.DIR_GAME_HOME, "custom_instances/"+modpackName));
+            modLoaderInfo = installFunction.installModpack(modpackFile, new File(Tools.DIR_GAME_HOME, ".minecraft"));
 
         } finally {
             modpackFile.delete();
@@ -56,18 +53,18 @@ public class ModpackInstaller {
             return null;
         }
 
-        // Create the instance
-        MinecraftProfile profile = new MinecraftProfile();
-        profile.gameDir = "./custom_instances/" + modpackName;
-        profile.name = modDetail.title;
-        profile.lastVersionId = modLoaderInfo.getVersionId();
-        profile.icon = ModIconCache.getBase64Image(modDetail.getIconCacheTag());
-
-
-        LauncherProfiles.mainProfileJson.profiles.put(modpackName, profile);
-        LauncherProfiles.write();
-
         LauncherActivity.MODPACK_DOWNLOAD_FINISH = true;
+
+        // Create the instance
+//        MinecraftProfile profile = new MinecraftProfile();
+//        profile.gameDir = "./.minecraft";
+//        profile.name = modDetail.title;
+//        profile.lastVersionId = modLoaderInfo.getVersionId();
+//        profile.icon = ModIconCache.getBase64Image(modDetail.getIconCacheTag());
+//
+//
+//        LauncherProfiles.mainProfileJson.profiles.put(modpackName, profile);
+//        LauncherProfiles.write();
 
         return modLoaderInfo;
     }
