@@ -62,12 +62,12 @@ public class LauncherActivity extends BaseActivity {
     public static boolean MODPACK_DOWNLOAD_FINISH = false;
 
     private static final ModItem DEFAULT_MODPACK = new ModItem(
-            Constants.SOURCE_MODRINTH,
+            Constants.SOURCE_TECHNIC,
             true,
-            "bynEcDAP",
-            "NetPixelmon - Pojav",
-            "Set out on the greatest Pixelmon adventure, delivering the highest quality experience and performance the Pixelmon world can offer.",
-            "https://cdn.modrinth.com/data/bynEcDAP/7bff05d20b500ff4686f4b092885302aeb293b10_96.webp"
+            "netpixelmon",
+            "",
+            "",
+            ""
     );
 
     public final ActivityResultLauncher<Object> modInstallerLauncher =
