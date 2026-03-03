@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.gms.security.ProviderInstaller;
 import com.kdt.mcgui.ProgressLayout;
 import com.kdt.mcgui.mcAccountSpinner;
 
@@ -205,16 +204,6 @@ public class LauncherActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        ProviderInstaller.installIfNeededAsync(this, new ProviderInstaller.ProviderInstallListener() {
-            @Override
-            public void onProviderInstalled() {
-            }
-
-            @Override
-            public void onProviderInstallFailed(int i, Intent intent) {
-            }
-        });
 
         setContentView(R.layout.activity_pojav_launcher);
         FragmentManager fragmentManager = getSupportFragmentManager();
